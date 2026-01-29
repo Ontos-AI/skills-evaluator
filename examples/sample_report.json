@@ -1,0 +1,45 @@
+{
+    "skill_id": "ai-agent-trend-analysis",
+    "skill_path": "/Users/wuchengke/Desktop/anything-skills/output/skills/ai-agent-trend-analysis",
+    "evaluated_at": "2026-01-28T13:18:18.424165Z",
+    "tier": "quick",
+    "scores": {
+        "overall": 0.59,
+        "structure": 1.0,
+        "triggers": 0.6,
+        "actionability": 0.55,
+        "tool_refs": 0.5,
+        "examples": 0.3
+    },
+    "issues": [
+        {
+            "severity": "error",
+            "code": "DUPLICATE_FRONTMATTER",
+            "message": "Duplicate YAML frontmatter block detected",
+            "suggestion": "Remove the duplicate --- block"
+        },
+        {
+            "severity": "info",
+            "code": "NO_RESOURCES",
+            "message": "No scripts/, references/, or assets/ directories found",
+            "suggestion": "Consider adding bundled resources if applicable"
+        },
+        {
+            "severity": "warning",
+            "code": "NO_USAGE_CONTEXT",
+            "message": "Description lacks clear usage context (e.g., 'Use when...')",
+            "suggestion": "Add 'Use when...' clause to description"
+        },
+        {
+            "severity": "error",
+            "code": "MANY_PLACEHOLDERS",
+            "message": "Found 4 placeholders - skill may be incomplete"
+        }
+    ],
+    "recommendations": [
+        "Remove duplicate YAML frontmatter block (critical)",
+        "Add 'Use when...' clause to description for better triggering",
+        "Replace placeholder text with real examples"
+    ],
+    "badge": "bronze"
+}

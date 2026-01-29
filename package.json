@@ -1,0 +1,26 @@
+{
+    "name": "ontos-skill-evaluator",
+    "version": "1.0.0",
+    "description": "Meta-skill for evaluating Claude Skills quality - by Ontos AI",
+    "main": "scripts/quick_eval.js",
+    "bin": {
+        "ontos-eval": "./scripts/quick_eval.js"
+    },
+    "scripts": {
+        "eval": "node scripts/quick_eval.js"
+    },
+    "keywords": [
+        "claude",
+        "skills",
+        "evaluator",
+        "ai-agent",
+        "quality-assurance"
+    ],
+    "author": "Ontos AI",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Ontos-AI/skills-evaluator.git"
+    },
+    "homepage": "https://github.com/Ontos-AI/skills-evaluator#readme"
+}

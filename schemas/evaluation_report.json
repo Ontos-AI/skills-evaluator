@@ -1,0 +1,166 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "SkillEvaluationReport",
+    "description": "Output schema for skill-evaluator Quick Eval",
+    "type": "object",
+    "required": [
+        "skill_id",
+        "evaluated_at",
+        "tier",
+        "scores",
+        "issues",
+        "recommendations",
+        "badge"
+    ],
+    "properties": {
+        "skill_id": {
+            "type": "string",
+            "description": "Name of the evaluated skill"
+        },
+        "skill_path": {
+            "type": "string",
+            "description": "Absolute path to the skill directory"
+        },
+        "evaluated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO8601 timestamp of evaluation"
+        },
+        "tier": {
+            "type": "string",
+            "enum": [
+                "quick",
+                "deep"
+            ],
+            "description": "Evaluation tier performed"
+        },
+        "scores": {
+            "type": "object",
+            "required": [
+                "overall",
+                "structure",
+                "triggers",
+                "actionability",
+                "tool_refs",
+                "examples"
+            ],
+            "properties": {
+                "overall": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "structure": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "triggers": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "actionability": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "tool_refs": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "examples": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                }
+            }
+        },
+        "tier2_scores": {
+            "type": "object",
+            "description": "Optional Tier 2 deep benchmark scores (Phase 2)",
+            "properties": {
+                "task_success_rate": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "hallucination_rate": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "token_efficiency": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "trajectory_efficiency": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                },
+                "consistency": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                }
+            }
+        },
+        "issues": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "severity",
+                    "code",
+                    "message"
+                ],
+                "properties": {
+                    "severity": {
+                        "type": "string",
+                        "enum": [
+                            "error",
+                            "warning",
+                            "info"
+                        ]
+                    },
+                    "code": {
+                        "type": "string",
+                        "description": "Issue code like DUPLICATE_FRONTMATTER, MISSING_TRIGGERS"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Human-readable issue description"
+                    },
+                    "line": {
+                        "type": "integer",
+                        "description": "Optional line number where issue occurs"
+                    },
+                    "suggestion": {
+                        "type": "string",
+                        "description": "Optional fix suggestion"
+                    }
+                }
+            }
+        },
+        "recommendations": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "Prioritized list of improvement recommendations"
+        },
+        "badge": {
+            "type": "string",
+            "enum": [
+                "gold",
+                "silver",
+                "bronze",
+                "fail"
+            ],
+            "description": "Quality badge based on overall score"
+        }
+    }
+}
