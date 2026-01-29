@@ -42,16 +42,37 @@ function createScores() {
     };
 }
 
+// =============================================================================
+// Constants
+// =============================================================================
+
+const PASS_THRESHOLD = 0.70;
+const TOKEN_LIMITS = {
+    description: { warn: 512, error: 1024 },
+    body_lines: { warn: 300, error: 500 },
+    body_chars: { warn: 8000, error: 16000 }
+};
+
 function createReport(skillId, skillPath) {
     return {
         skill_id: skillId,
         skill_path: skillPath,
         evaluated_at: new Date().toISOString(),
         tier: 'quick',
+        // Phase 1: Pass/Fail
+        is_passed: false,
+        pass_threshold: PASS_THRESHOLD,
+        // Phase 1: Badge
+        badge: 'fail',
+        badge_markdown: '',
+        badge_html: '',
+        // Scores
         scores: createScores(),
+        // Phase 1: Token Warnings
+        token_warnings: [],
+        // Issues & Recommendations
         issues: [],
-        recommendations: [],
-        badge: 'fail'
+        recommendations: []
     };
 }
 
@@ -339,6 +360,102 @@ function checkExamples(body, issues) {
 }
 
 // =============================================================================
+// Phase 1: Token Efficiency Check
+// =============================================================================
+
+function checkTokenEfficiency(frontmatter, body, tokenWarnings) {
+    const description = frontmatter?.description || '';
+    const bodyLines = body.split('\n').length;
+    const bodyChars = body.length;
+
+    // Check description length
+    if (description.length > TOKEN_LIMITS.description.error) {
+        tokenWarnings.push({
+            field: 'description',
+            current: description.length,
+            limit: TOKEN_LIMITS.description.error,
+            severity: 'error',
+            message: `Description is ${description.length} chars (limit: ${TOKEN_LIMITS.description.error}) - may significantly increase latency and cost`
+        });
+    } else if (description.length > TOKEN_LIMITS.description.warn) {
+        tokenWarnings.push({
+            field: 'description',
+            current: description.length,
+            limit: TOKEN_LIMITS.description.warn,
+            severity: 'warning',
+            message: `Description is ${description.length} chars (recommended: <${TOKEN_LIMITS.description.warn}) - consider condensing`
+        });
+    }
+
+    // Check body lines
+    if (bodyLines > TOKEN_LIMITS.body_lines.error) {
+        tokenWarnings.push({
+            field: 'body_lines',
+            current: bodyLines,
+            limit: TOKEN_LIMITS.body_lines.error,
+            severity: 'error',
+            message: `Body is ${bodyLines} lines (limit: ${TOKEN_LIMITS.body_lines.error}) - consider splitting into references`
+        });
+    } else if (bodyLines > TOKEN_LIMITS.body_lines.warn) {
+        tokenWarnings.push({
+            field: 'body_lines',
+            current: bodyLines,
+            limit: TOKEN_LIMITS.body_lines.warn,
+            severity: 'warning',
+            message: `Body is ${bodyLines} lines (recommended: <${TOKEN_LIMITS.body_lines.warn}) - may affect response speed`
+        });
+    }
+
+    // Check body characters (rough token estimate)
+    if (bodyChars > TOKEN_LIMITS.body_chars.error) {
+        tokenWarnings.push({
+            field: 'body_chars',
+            current: bodyChars,
+            limit: TOKEN_LIMITS.body_chars.error,
+            severity: 'error',
+            message: `Body is ~${Math.round(bodyChars / 4)} tokens (limit: ~${TOKEN_LIMITS.body_chars.error / 4}) - will increase costs`
+        });
+    } else if (bodyChars > TOKEN_LIMITS.body_chars.warn) {
+        tokenWarnings.push({
+            field: 'body_chars',
+            current: bodyChars,
+            limit: TOKEN_LIMITS.body_chars.warn,
+            severity: 'warning',
+            message: `Body is ~${Math.round(bodyChars / 4)} tokens (recommended: <${TOKEN_LIMITS.body_chars.warn / 4})`
+        });
+    }
+}
+
+// =============================================================================
+// Phase 1: Badge Markdown Generator
+// =============================================================================
+
+function generateBadgeMarkdown(badge, skillId) {
+    const colors = {
+        gold: 'gold',
+        silver: 'silver',
+        bronze: 'CD7F32',
+        fail: 'DC2626'
+    };
+    const labels = {
+        gold: '🥇 Gold',
+        silver: '🥈 Silver',
+        bronze: '🥉 Bronze',
+        fail: '❌ Fail'
+    };
+
+    const color = colors[badge] || 'gray';
+    const label = encodeURIComponent(labels[badge] || badge);
+    const badgeUrl = `https://img.shields.io/badge/Ontos-${label}-${color}?style=flat-square`;
+    const linkUrl = 'https://skills.sh/ontos-ai/skills-evaluator';
+
+    return {
+        markdown: `[![Ontos ${badge.charAt(0).toUpperCase() + badge.slice(1)}](${badgeUrl})](${linkUrl})`,
+        html: `<a href="${linkUrl}"><img src="${badgeUrl}" alt="Ontos ${badge}"></a>`
+    };
+}
+
+// =============================================================================
 // Main Evaluation
 // =============================================================================
 
@@ -350,12 +467,19 @@ function evaluateSkill(skillPath) {
     if (!fs.existsSync(skillMd)) {
         report.issues.push(createIssue('error', 'NO_SKILL_MD', `SKILL.md not found in ${skillPath}`));
         report.badge = 'fail';
+        report.is_passed = false;
+        const badges = generateBadgeMarkdown('fail', report.skill_id);
+        report.badge_markdown = badges.markdown;
+        report.badge_html = badges.html;
         return report;
     }
 
     const content = fs.readFileSync(skillMd, 'utf-8');
     const { frontmatter, body, issues } = parseFrontmatter(content);
     report.issues.push(...issues);
+
+    // Phase 1: Token efficiency check
+    checkTokenEfficiency(frontmatter, body, report.token_warnings);
 
     report.scores.structure = checkStructure(skillPath, frontmatter, body, report.issues);
     report.scores.triggers = checkTriggers(frontmatter, body, report.issues);
@@ -368,6 +492,14 @@ function evaluateSkill(skillPath) {
     else if (overall >= 0.70) report.badge = 'silver';
     else if (overall >= 0.50) report.badge = 'bronze';
     else report.badge = 'fail';
+
+    // Phase 1: Set is_passed based on threshold
+    report.is_passed = overall >= PASS_THRESHOLD;
+
+    // Phase 1: Generate badge markdown
+    const badges = generateBadgeMarkdown(report.badge, report.skill_id);
+    report.badge_markdown = badges.markdown;
+    report.badge_html = badges.html;
 
     // Generate recommendations
     const errorCodes = report.issues.filter(i => i.severity === 'error').map(i => i.code);
@@ -387,6 +519,10 @@ function evaluateSkill(skillPath) {
     }
     if (errorCodes.includes('MANY_PLACEHOLDERS') || warningCodes.includes('PLACEHOLDERS_FOUND')) {
         report.recommendations.push('Replace placeholder text with real examples');
+    }
+    // Phase 1: Token warning recommendations
+    if (report.token_warnings.length > 0) {
+        report.recommendations.push('Reduce skill size for better performance (see token_warnings)');
     }
 
     return report;
@@ -415,7 +551,18 @@ function evaluateBatch(skillsDir) {
 function toJson(report) {
     const scores = report.scores;
     return JSON.stringify({
-        ...report,
+        skill_id: report.skill_id,
+        skill_path: report.skill_path,
+        evaluated_at: report.evaluated_at,
+        tier: report.tier,
+        // Phase 1: Pass/Fail
+        is_passed: report.is_passed,
+        pass_threshold: report.pass_threshold,
+        // Badge
+        badge: report.badge,
+        badge_markdown: report.badge_markdown,
+        badge_html: report.badge_html,
+        // Scores
         scores: {
             overall: Math.round(scores.overall * 100) / 100,
             structure: Math.round(scores.structure * 100) / 100,
@@ -423,7 +570,12 @@ function toJson(report) {
             actionability: Math.round(scores.actionability * 100) / 100,
             tool_refs: Math.round(scores.tool_refs * 100) / 100,
             examples: Math.round(scores.examples * 100) / 100
-        }
+        },
+        // Phase 1: Token Warnings
+        token_warnings: report.token_warnings,
+        // Issues & Recommendations
+        issues: report.issues,
+        recommendations: report.recommendations
     }, null, 2);
 }
 

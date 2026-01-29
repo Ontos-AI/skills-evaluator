@@ -1,0 +1,69 @@
+{
+  "skill_id": "weather",
+  "skill_path": "/Users/wuchengke/Desktop/skills-evaluator/test-skills/weather",
+  "evaluated_at": "2026-01-29T08:41:41.092Z",
+  "tier": "quick",
+  "is_passed": false,
+  "pass_threshold": 0.7,
+  "badge": "bronze",
+  "badge_markdown": "[![Ontos Bronze](https://img.shields.io/badge/Ontos-%F0%9F%A5%89%20Bronze-CD7F32?style=flat-square)](https://skills.sh/ontos-ai/skills-evaluator)",
+  "badge_html": "<a href=\"https://skills.sh/ontos-ai/skills-evaluator\"><img src=\"https://img.shields.io/badge/Ontos-%F0%9F%A5%89%20Bronze-CD7F32?style=flat-square\" alt=\"Ontos bronze\"></a>",
+  "scores": {
+    "overall": 0.66,
+    "structure": 1,
+    "triggers": 0.4,
+    "actionability": 0.8,
+    "tool_refs": 0.2,
+    "examples": 0.8
+  },
+  "token_warnings": [],
+  "issues": [
+    {
+      "severity": "error",
+      "code": "DUPLICATE_FRONTMATTER",
+      "message": "Duplicate YAML frontmatter block detected",
+      "line": null,
+      "suggestion": "Remove the duplicate --- block"
+    },
+    {
+      "severity": "info",
+      "code": "NO_RESOURCES",
+      "message": "No scripts/, references/, or assets/ directories found",
+      "line": null,
+      "suggestion": "Consider adding bundled resources if applicable"
+    },
+    {
+      "severity": "warning",
+      "code": "NO_USAGE_CONTEXT",
+      "message": "Description lacks clear usage context (e.g., 'Use when...')",
+      "line": null,
+      "suggestion": "Add 'Use when...' clause to description"
+    },
+    {
+      "severity": "warning",
+      "code": "SHORT_DESCRIPTION",
+      "message": "Description is only 29 chars, may be too vague",
+      "line": null,
+      "suggestion": "Expand description to at least 50 characters"
+    },
+    {
+      "severity": "info",
+      "code": "FEW_IMPERATIVES",
+      "message": "Few imperative verbs found (run, create, check, etc.)",
+      "line": null,
+      "suggestion": "Use more action-oriented language"
+    },
+    {
+      "severity": "warning",
+      "code": "PLACEHOLDERS_FOUND",
+      "message": "Found 1 placeholder(s)",
+      "line": null,
+      "suggestion": "Replace placeholders with real examples"
+    }
+  ],
+  "recommendations": [
+    "Remove duplicate YAML frontmatter block (critical)",
+    "Add 'Use when...' clause to description for better triggering",
+    "Replace placeholder text with real examples"
+  ]
+}

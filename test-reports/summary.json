@@ -1,0 +1,31 @@
+{
+  "evaluated_at": "2026-01-29T08:41:41Z",
+  "engine": "nodejs",
+  "total_skills": 15,
+  "passed": 3,
+  "failed": 12,
+  "pass_rate": 20.00,
+  "by_badge": {
+    "gold": 1,
+    "silver": 2,
+    "bronze": 11,
+    "fail": 1
+  },
+  "skills": [
+    {"name": "clinical-trial-protocol-generation", "score": 0.54, "badge": "bronze", "is_passed": false},
+    {"name": "driver-license-eligibility", "score": 0.61, "badge": "bronze", "is_passed": false},
+    {"name": "faq-finder", "score": 0.67, "badge": "bronze", "is_passed": false},
+    {"name": "github-to-skills", "score": 0.73, "badge": "silver", "is_passed": true},
+    {"name": "github-trending-today", "score": 0.64, "badge": "bronze", "is_passed": false},
+    {"name": "hello-world", "score": 0.49, "badge": "fail", "is_passed": false},
+    {"name": "nfl-super-bowl-scores", "score": 0.61, "badge": "bronze", "is_passed": false},
+    {"name": "skill-creator", "score": 0.78, "badge": "silver", "is_passed": true},
+    {"name": "skill-evolution-manager", "score": 0.69, "badge": "bronze", "is_passed": false},
+    {"name": "skill-manager", "score": 0.58, "badge": "bronze", "is_passed": false},
+    {"name": "skills-sh-searcher", "score": 0.88, "badge": "gold", "is_passed": true},
+    {"name": "summarize-ai-agent-trends", "score": 0.53, "badge": "bronze", "is_passed": false},
+    {"name": "united-airlines-baggage-fee-calculator", "score": 0.61, "badge": "bronze", "is_passed": false},
+    {"name": "united-baggage-calculator", "score": 0.67, "badge": "bronze", "is_passed": false},
+    {"name": "weather", "score": 0.66, "badge": "bronze", "is_passed": false}
+  ]
+}

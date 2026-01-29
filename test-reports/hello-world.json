@@ -1,0 +1,89 @@
+{
+  "skill_id": "hello-world",
+  "skill_path": "/Users/wuchengke/Desktop/skills-evaluator/test-skills/hello-world",
+  "evaluated_at": "2026-01-29T08:41:40.662Z",
+  "tier": "quick",
+  "is_passed": false,
+  "pass_threshold": 0.7,
+  "badge": "fail",
+  "badge_markdown": "[![Ontos Fail](https://img.shields.io/badge/Ontos-%E2%9D%8C%20Fail-DC2626?style=flat-square)](https://skills.sh/ontos-ai/skills-evaluator)",
+  "badge_html": "<a href=\"https://skills.sh/ontos-ai/skills-evaluator\"><img src=\"https://img.shields.io/badge/Ontos-%E2%9D%8C%20Fail-DC2626?style=flat-square\" alt=\"Ontos fail\"></a>",
+  "scores": {
+    "overall": 0.49,
+    "structure": 1,
+    "triggers": 0.4,
+    "actionability": 0.2,
+    "tool_refs": 0.5,
+    "examples": 0.4
+  },
+  "token_warnings": [],
+  "issues": [
+    {
+      "severity": "info",
+      "code": "NO_RESOURCES",
+      "message": "No scripts/, references/, or assets/ directories found",
+      "line": null,
+      "suggestion": "Consider adding bundled resources if applicable"
+    },
+    {
+      "severity": "warning",
+      "code": "NO_USAGE_CONTEXT",
+      "message": "Description lacks clear usage context (e.g., 'Use when...')",
+      "line": null,
+      "suggestion": "Add 'Use when...' clause to description"
+    },
+    {
+      "severity": "warning",
+      "code": "SHORT_DESCRIPTION",
+      "message": "Description is only 42 chars, may be too vague",
+      "line": null,
+      "suggestion": "Expand description to at least 50 characters"
+    },
+    {
+      "severity": "warning",
+      "code": "NO_STEPS",
+      "message": "No numbered or bulleted procedural steps found",
+      "line": null,
+      "suggestion": "Add step-by-step instructions"
+    },
+    {
+      "severity": "info",
+      "code": "NO_CODE_BLOCKS",
+      "message": "No code blocks found",
+      "line": null,
+      "suggestion": "Add code examples for concrete guidance"
+    },
+    {
+      "severity": "info",
+      "code": "FEW_IMPERATIVES",
+      "message": "Few imperative verbs found (run, create, check, etc.)",
+      "line": null,
+      "suggestion": "Use more action-oriented language"
+    },
+    {
+      "severity": "info",
+      "code": "NO_TOOL_REFS",
+      "message": "No tool, script, or API references found",
+      "line": null,
+      "suggestion": "Consider adding bundled scripts or tool guidance"
+    },
+    {
+      "severity": "info",
+      "code": "NO_EXAMPLE_SECTION",
+      "message": "No dedicated Examples section found",
+      "line": null,
+      "suggestion": null
+    },
+    {
+      "severity": "info",
+      "code": "NO_OUTPUT_FORMAT",
+      "message": "No clear output format specification",
+      "line": null,
+      "suggestion": "Add example output to show expected results"
+    }
+  ],
+  "recommendations": [
+    "Add 'Use when...' clause to description for better triggering",
+    "Add numbered procedural steps for better actionability"
+  ]
+}

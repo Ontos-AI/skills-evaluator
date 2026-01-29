@@ -20,6 +20,19 @@ from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
+from urllib.parse import quote
+
+
+# =============================================================================
+# Constants
+# =============================================================================
+
+PASS_THRESHOLD = 0.70
+TOKEN_LIMITS = {
+    "description": {"warn": 512, "error": 1024},
+    "body_lines": {"warn": 300, "error": 500},
+    "body_chars": {"warn": 8000, "error": 16000},
+}
 
 
 # =============================================================================
@@ -56,15 +69,34 @@ class Scores:
 
 
 @dataclass
+class TokenWarning:
+    field: str
+    current: int
+    limit: int
+    severity: str  # "warning" | "error"
+    message: str
+
+
+@dataclass
 class EvaluationReport:
     skill_id: str
     skill_path: str
     evaluated_at: str
     tier: str = "quick"
+    # Phase 1: Pass/Fail
+    is_passed: bool = False
+    pass_threshold: float = PASS_THRESHOLD
+    # Badge
+    badge: str = "fail"
+    badge_markdown: str = ""
+    badge_html: str = ""
+    # Scores
     scores: Scores = field(default_factory=Scores)
+    # Phase 1: Token Warnings
+    token_warnings: list = field(default_factory=list)
+    # Issues & Recommendations
     issues: list = field(default_factory=list)
     recommendations: list = field(default_factory=list)
-    badge: str = "fail"
 
     def to_dict(self) -> dict:
         return {
@@ -72,6 +104,14 @@ class EvaluationReport:
             "skill_path": self.skill_path,
             "evaluated_at": self.evaluated_at,
             "tier": self.tier,
+            # Phase 1: Pass/Fail
+            "is_passed": self.is_passed,
+            "pass_threshold": self.pass_threshold,
+            # Badge
+            "badge": self.badge,
+            "badge_markdown": self.badge_markdown,
+            "badge_html": self.badge_html,
+            # Scores
             "scores": {
                 "overall": round(self.scores.overall, 2),
                 "structure": round(self.scores.structure, 2),
@@ -80,9 +120,11 @@ class EvaluationReport:
                 "tool_refs": round(self.scores.tool_refs, 2),
                 "examples": round(self.scores.examples, 2),
             },
+            # Phase 1: Token Warnings
+            "token_warnings": [asdict(w) if isinstance(w, TokenWarning) else w for w in self.token_warnings],
+            # Issues & Recommendations
             "issues": [asdict(i) if isinstance(i, Issue) else i for i in self.issues],
             "recommendations": self.recommendations,
-            "badge": self.badge,
         }
 
     def to_json(self) -> str:
@@ -441,6 +483,101 @@ def check_examples(body: str, issues: list[Issue]) -> float:
 
 
 # =============================================================================
+# Phase 1: Token Efficiency Check
+# =============================================================================
+
+def check_token_efficiency(frontmatter: dict | None, body: str, token_warnings: list):
+    """Check if skill content is too large (affects latency/cost)."""
+    description = frontmatter.get("description", "") if frontmatter else ""
+    body_lines = len(body.split("\n"))
+    body_chars = len(body)
+
+    # Check description length
+    if len(description) > TOKEN_LIMITS["description"]["error"]:
+        token_warnings.append(TokenWarning(
+            field="description",
+            current=len(description),
+            limit=TOKEN_LIMITS["description"]["error"],
+            severity="error",
+            message=f"Description is {len(description)} chars (limit: {TOKEN_LIMITS['description']['error']}) - may significantly increase latency and cost"
+        ))
+    elif len(description) > TOKEN_LIMITS["description"]["warn"]:
+        token_warnings.append(TokenWarning(
+            field="description",
+            current=len(description),
+            limit=TOKEN_LIMITS["description"]["warn"],
+            severity="warning",
+            message=f"Description is {len(description)} chars (recommended: <{TOKEN_LIMITS['description']['warn']}) - consider condensing"
+        ))
+
+    # Check body lines
+    if body_lines > TOKEN_LIMITS["body_lines"]["error"]:
+        token_warnings.append(TokenWarning(
+            field="body_lines",
+            current=body_lines,
+            limit=TOKEN_LIMITS["body_lines"]["error"],
+            severity="error",
+            message=f"Body is {body_lines} lines (limit: {TOKEN_LIMITS['body_lines']['error']}) - consider splitting into references"
+        ))
+    elif body_lines > TOKEN_LIMITS["body_lines"]["warn"]:
+        token_warnings.append(TokenWarning(
+            field="body_lines",
+            current=body_lines,
+            limit=TOKEN_LIMITS["body_lines"]["warn"],
+            severity="warning",
+            message=f"Body is {body_lines} lines (recommended: <{TOKEN_LIMITS['body_lines']['warn']}) - may affect response speed"
+        ))
+
+    # Check body characters (rough token estimate)
+    if body_chars > TOKEN_LIMITS["body_chars"]["error"]:
+        token_warnings.append(TokenWarning(
+            field="body_chars",
+            current=body_chars,
+            limit=TOKEN_LIMITS["body_chars"]["error"],
+            severity="error",
+            message=f"Body is ~{body_chars // 4} tokens (limit: ~{TOKEN_LIMITS['body_chars']['error'] // 4}) - will increase costs"
+        ))
+    elif body_chars > TOKEN_LIMITS["body_chars"]["warn"]:
+        token_warnings.append(TokenWarning(
+            field="body_chars",
+            current=body_chars,
+            limit=TOKEN_LIMITS["body_chars"]["warn"],
+            severity="warning",
+            message=f"Body is ~{body_chars // 4} tokens (recommended: <{TOKEN_LIMITS['body_chars']['warn'] // 4})"
+        ))
+
+
+# =============================================================================
+# Phase 1: Badge Markdown Generator
+# =============================================================================
+
+def generate_badge_markdown(badge: str, skill_id: str) -> tuple[str, str]:
+    """Generate badge markdown and HTML for README embedding."""
+    colors = {
+        "gold": "gold",
+        "silver": "silver",
+        "bronze": "CD7F32",
+        "fail": "DC2626"
+    }
+    labels = {
+        "gold": "🥇 Gold",
+        "silver": "🥈 Silver",
+        "bronze": "🥉 Bronze",
+        "fail": "❌ Fail"
+    }
+    
+    color = colors.get(badge, "gray")
+    label = quote(labels.get(badge, badge))
+    badge_url = f"https://img.shields.io/badge/Ontos-{label}-{color}?style=flat-square"
+    link_url = "https://skills.sh/ontos-ai/skills-evaluator"
+    
+    md = f"[![Ontos {badge.capitalize()}]({badge_url})]({link_url})"
+    html = f'<a href="{link_url}"><img src="{badge_url}" alt="Ontos {badge}"></a>'
+    
+    return md, html
+
+
+# =============================================================================
 # Main Evaluation
 # =============================================================================
 
@@ -460,11 +597,16 @@ def evaluate_skill(skill_path: Path, verbose: bool = False) -> EvaluationReport:
     if not skill_md.exists():
         report.issues.append(Issue("error", "NO_SKILL_MD", f"SKILL.md not found in {skill_path}"))
         report.badge = "fail"
+        report.is_passed = False
+        report.badge_markdown, report.badge_html = generate_badge_markdown("fail", report.skill_id)
         return report
 
     content = skill_md.read_text(encoding="utf-8")
     frontmatter, body, parse_issues = parse_frontmatter(content)
     report.issues.extend(parse_issues)
+
+    # Phase 1: Token efficiency check
+    check_token_efficiency(frontmatter, body, report.token_warnings)
 
     # Run checks
     report.scores.structure = check_structure(skill_path, frontmatter, body, report.issues)
@@ -484,6 +626,12 @@ def evaluate_skill(skill_path: Path, verbose: bool = False) -> EvaluationReport:
     else:
         report.badge = "fail"
 
+    # Phase 1: Set is_passed based on threshold
+    report.is_passed = overall >= PASS_THRESHOLD
+
+    # Phase 1: Generate badge markdown
+    report.badge_markdown, report.badge_html = generate_badge_markdown(report.badge, report.skill_id)
+
     # Generate recommendations (prioritized by issue severity)
     error_codes = [i.code for i in report.issues if isinstance(i, Issue) and i.severity == "error"]
     warning_codes = [i.code for i in report.issues if isinstance(i, Issue) and i.severity == "warning"]
@@ -498,6 +646,9 @@ def evaluate_skill(skill_path: Path, verbose: bool = False) -> EvaluationReport:
         report.recommendations.append("Add numbered procedural steps for better actionability")
     if "MANY_PLACEHOLDERS" in error_codes or "PLACEHOLDERS_FOUND" in warning_codes:
         report.recommendations.append("Replace placeholder text with real examples")
+    # Phase 1: Token warning recommendations
+    if report.token_warnings:
+        report.recommendations.append("Reduce skill size for better performance (see token_warnings)")
 
     return report
 

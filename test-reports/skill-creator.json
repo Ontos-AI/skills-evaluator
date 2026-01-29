@@ -1,0 +1,84 @@
+{
+  "skill_id": "skill-creator",
+  "skill_path": "/Users/wuchengke/Desktop/skills-evaluator/test-skills/skill-creator",
+  "evaluated_at": "2026-01-29T08:41:40.756Z",
+  "tier": "quick",
+  "is_passed": true,
+  "pass_threshold": 0.7,
+  "badge": "silver",
+  "badge_markdown": "[![Ontos Silver](https://img.shields.io/badge/Ontos-%F0%9F%A5%88%20Silver-silver?style=flat-square)](https://skills.sh/ontos-ai/skills-evaluator)",
+  "badge_html": "<a href=\"https://skills.sh/ontos-ai/skills-evaluator\"><img src=\"https://img.shields.io/badge/Ontos-%F0%9F%A5%88%20Silver-silver?style=flat-square\" alt=\"Ontos silver\"></a>",
+  "scores": {
+    "overall": 0.78,
+    "structure": 1,
+    "triggers": 0.6,
+    "actionability": 1,
+    "tool_refs": 1,
+    "examples": 0.2
+  },
+  "token_warnings": [
+    {
+      "field": "body_lines",
+      "current": 350,
+      "limit": 300,
+      "severity": "warning",
+      "message": "Body is 350 lines (recommended: <300) - may affect response speed"
+    },
+    {
+      "field": "body_chars",
+      "current": 17392,
+      "limit": 16000,
+      "severity": "error",
+      "message": "Body is ~4348 tokens (limit: ~4000) - will increase costs"
+    }
+  ],
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "NO_USAGE_CONTEXT",
+      "message": "Description lacks clear usage context (e.g., 'Use when...')",
+      "line": null,
+      "suggestion": "Add 'Use when...' clause to description"
+    },
+    {
+      "severity": "error",
+      "code": "BROKEN_SCRIPT_REF",
+      "message": "Referenced script not found: scripts/rotate_pdf.py",
+      "line": null,
+      "suggestion": "Create scripts/rotate_pdf.py or fix the reference"
+    },
+    {
+      "severity": "error",
+      "code": "BROKEN_SCRIPT_REF",
+      "message": "Referenced script not found: scripts/rotate_pdf.py",
+      "line": null,
+      "suggestion": "Create scripts/rotate_pdf.py or fix the reference"
+    },
+    {
+      "severity": "warning",
+      "code": "PLACEHOLDERS_FOUND",
+      "message": "Found 2 placeholder(s)",
+      "line": null,
+      "suggestion": "Replace placeholders with real examples"
+    },
+    {
+      "severity": "info",
+      "code": "NO_EXAMPLE_SECTION",
+      "message": "No dedicated Examples section found",
+      "line": null,
+      "suggestion": null
+    },
+    {
+      "severity": "info",
+      "code": "NO_OUTPUT_FORMAT",
+      "message": "No clear output format specification",
+      "line": null,
+      "suggestion": "Add example output to show expected results"
+    }
+  ],
+  "recommendations": [
+    "Add 'Use when...' clause to description for better triggering",
+    "Replace placeholder text with real examples",
+    "Reduce skill size for better performance (see token_warnings)"
+  ]
+}
