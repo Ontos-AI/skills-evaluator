@@ -19,22 +19,42 @@ npx skills add ontos-ai/skills-evaluator
 
 ## Quick Start
 
-### Node.js (Recommended for skills.sh users)
+### First Time Setup
+
+After installation, configure your LLM API key (optional, for Level 2 testing):
 
 ```bash
-node scripts/quick_eval.js <path-to-skill>
-node scripts/quick_eval.js <path-to-skill> --format html
+node scripts/setup.js
 ```
 
-### Python (For local development)
+### Evaluate a Skill
 
 ```bash
-python scripts/quick_eval.py <path-to-skill>
+node scripts/eval.js <path-to-skill>
 ```
 
-Example:
+This runs **progressive evaluation**:
+1. **Level 1 (Quick Eval)** - Static analysis, no LLM required
+2. **Level 2 (Smoke Test)** - LLM invocation test (requires API key)
+
+After Level 1 passes, you'll be prompted to continue to Level 2.
+
+### Command Options
+
 ```bash
-node scripts/quick_eval.js ../output/skills/ai-agent-trend-analysis --format html
+node scripts/eval.js ./my-skill              # Interactive (recommended)
+node scripts/eval.js ./my-skill --quick      # Level 1 only
+node scripts/eval.js ./my-skill --smoke      # Level 2 only
+node scripts/eval.js ./my-skill --full       # All levels, no prompts
+node scripts/eval.js ./my-skill --ci         # CI mode, JSON output
+```
+
+### Providers
+
+For Level 2, supported LLM providers: DeepSeek (default), Qwen, OpenAI, Claude, Ollama
+
+```bash
+node scripts/eval.js ./my-skill --provider qwen
 ```
 
 ## Evaluation Dimensions

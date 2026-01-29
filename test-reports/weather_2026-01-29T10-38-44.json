@@ -1,0 +1,134 @@
+{
+  "skill_path": "test-skills/weather",
+  "evaluated_at": "2026-01-29T10:38:44.168Z",
+  "levels": {
+    "quick_eval": {
+      "skill_id": "weather",
+      "skill_path": "/Users/wuchengke/Desktop/skills-evaluator/test-skills/weather",
+      "evaluated_at": "2026-01-29T10:38:01.117Z",
+      "tier": "quick",
+      "is_passed": false,
+      "pass_threshold": 0.7,
+      "badge": "bronze",
+      "badge_markdown": "[![Ontos Bronze](https://img.shields.io/badge/Ontos-%F0%9F%A5%89%20Bronze-CD7F32?style=flat-square)](https://skills.sh/ontos-ai/skills-evaluator)",
+      "badge_html": "<a href=\"https://skills.sh/ontos-ai/skills-evaluator\"><img src=\"https://img.shields.io/badge/Ontos-%F0%9F%A5%89%20Bronze-CD7F32?style=flat-square\" alt=\"Ontos bronze\"></a>",
+      "scores": {
+        "overall": 0.66,
+        "structure": 1,
+        "triggers": 0.4,
+        "actionability": 0.8,
+        "tool_refs": 0.2,
+        "examples": 0.8
+      },
+      "token_warnings": [],
+      "issues": [
+        {
+          "severity": "error",
+          "code": "DUPLICATE_FRONTMATTER",
+          "message": "Duplicate YAML frontmatter block detected",
+          "line": null,
+          "suggestion": "Remove the duplicate --- block"
+        },
+        {
+          "severity": "info",
+          "code": "NO_RESOURCES",
+          "message": "No scripts/, references/, or assets/ directories found",
+          "line": null,
+          "suggestion": "Consider adding bundled resources if applicable"
+        },
+        {
+          "severity": "warning",
+          "code": "NO_USAGE_CONTEXT",
+          "message": "Description lacks clear usage context (e.g., 'Use when...')",
+          "line": null,
+          "suggestion": "Add 'Use when...' clause to description"
+        },
+        {
+          "severity": "warning",
+          "code": "SHORT_DESCRIPTION",
+          "message": "Description is only 29 chars, may be too vague",
+          "line": null,
+          "suggestion": "Expand description to at least 50 characters"
+        },
+        {
+          "severity": "info",
+          "code": "FEW_IMPERATIVES",
+          "message": "Few imperative verbs found (run, create, check, etc.)",
+          "line": null,
+          "suggestion": "Use more action-oriented language"
+        },
+        {
+          "severity": "warning",
+          "code": "PLACEHOLDERS_FOUND",
+          "message": "Found 1 placeholder(s)",
+          "line": null,
+          "suggestion": "Replace placeholders with real examples"
+        }
+      ],
+      "recommendations": [
+        "Remove duplicate YAML frontmatter block (critical)",
+        "Add 'Use when...' clause to description for better triggering",
+        "Replace placeholder text with real examples"
+      ]
+    },
+    "smoke_test": {
+      "skill_id": "weather",
+      "skill_path": "test-skills/weather",
+      "tested_at": "2026-01-29T10:38:44.155Z",
+      "provider": "deepseek",
+      "judge_mode": "hybrid",
+      "test_count": 5,
+      "pass_count": 5,
+      "call_success_rate": 1,
+      "tests": [
+        {
+          "prompt": "Help me: a skill that can retrieve current weather conditions and forecasts for a specified location",
+          "response_preview": "I can help you with that! I have a weather skill available that can retrieve current weather conditions and forecasts for any location you specify.\n\n**Here's what I can do for you:**\n\n1. **Current Wea",
+          "verdict": "YES",
+          "confidence": 0.9999999999999999,
+          "method": "rule",
+          "latency_ms": 8581
+        },
+        {
+          "prompt": "I need to: a skill that can retrieve current weather conditions and forecasts for a specified location",
+          "response_preview": "I can help you with that! I have access to a weather skill that can retrieve current weather conditions and forecasts for any location you specify.\n\nTo use this skill, you can ask me questions like:\n-",
+          "verdict": "YES",
+          "confidence": 0.9999999999999999,
+          "method": "rule",
+          "latency_ms": 5275
+        },
+        {
+          "prompt": "a skill that can retrieve current weather conditions and forecasts for a specified location",
+          "response_preview": "I can help you with that! I have access to a weather skill that can retrieve current weather conditions and forecasts for any location you specify.\n\nTo get weather information, you can ask me question",
+          "verdict": "YES",
+          "confidence": 0.9999999999999999,
+          "method": "rule",
+          "latency_ms": 5103
+        },
+        {
+          "prompt": "How do I a skill that can retrieve current weather conditions and forecasts for a specified location?",
+          "response_preview": "I can help you understand how to create a weather skill! Based on the skill description you can see, here's how you would typically build a weather skill:\n\n## Key Components of a Weather Skill:\n\n### 1",
+          "verdict": "YES",
+          "confidence": 0.9999999999999999,
+          "method": "rule",
+          "latency_ms": 15448
+        },
+        {
+          "prompt": "Tell me about weather",
+          "response_preview": "I can help you with weather information! To get specific weather details, I'll need to know:\n\n**What would you like to know about the weather?**\n- Current conditions in a specific location\n- Forecast ",
+          "verdict": "YES",
+          "confidence": 0.9999999999999999,
+          "method": "rule",
+          "latency_ms": 5836
+        }
+      ],
+      "summary": "5/5 prompts successfully triggered the skill"
+    }
+  },
+  "summary": {
+    "all_passed": true,
+    "l1_score": 0.66,
+    "l1_badge": "bronze",
+    "l2_pass_rate": 1
+  }
+}
