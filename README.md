@@ -17,10 +17,11 @@
 
 ## ✨ Features
 
-- **5-Dimension Evaluation**: Structure, Triggers, Actionability, Tool References, Examples
+- **Progressive Evaluation**: L1 (Static) → L2 (Smoke Test) → L3 (Deep, coming soon)
+- **Unified Entry Point**: One command `eval.js` with interactive prompts
+- **Multi-Provider Smoke Test**: DeepSeek, Qwen, OpenAI, Claude, Ollama
 - **Beautiful HTML Reports**: ECharts radar visualization with elegant styling
-- **Zero Dependencies**: Works directly with `npx skills add`
-- **Dual Language Support**: Node.js for distribution, Python for local development
+- **Web UI**: Browser-based evaluation at [eval.skills.sh](https://eval.skills.sh)
 - **Badge System**: 🥇 Gold / 🥈 Silver / 🥉 Bronze / ❌ Fail
 
 ## 📦 Installation
@@ -29,34 +30,45 @@
 npx skills add ontos-ai/skills-evaluator
 ```
 
-## 🚀 Usage
+## 🚀 Quick Start
 
-### Evaluate a Single Skill
-
-```bash
-# JSON output (default)
-node scripts/quick_eval.js ./my-skill
-
-# Markdown report
-node scripts/quick_eval.js ./my-skill --format md
-
-# HTML report with radar chart
-node scripts/quick_eval.js ./my-skill --format html -o report.html
-```
-
-### Batch Evaluation
+### 1. Setup API Key (Optional, for Smoke Test)
 
 ```bash
-node scripts/quick_eval.js ./skills-directory --batch
+node scripts/setup.js
 ```
 
-### Python (Local Development)
+### 2. Evaluate a Skill
 
 ```bash
-python scripts/quick_eval.py ./my-skill --format html
+# Interactive (recommended) - automatically prompts for L2
+node scripts/eval.js ./my-skill
+
+# Quick static analysis only
+node scripts/eval.js ./my-skill --quick
+
+# Full evaluation without prompts
+node scripts/eval.js ./my-skill --full
+
+# CI mode with JSON output
+node scripts/eval.js ./my-skill --ci
 ```
 
-## 📊 Evaluation Dimensions
+### 3. View Reports
+
+Reports are automatically saved to `test-reports/`:
+- `skill_name_timestamp.html` - Visual report with radar chart
+- `skill_name_timestamp.json` - Machine-readable data
+
+## 🧪 Evaluation Levels
+
+| Level | Name | Requires | What it tests |
+|-------|------|----------|---------------|
+| **L1** | Quick Eval | Nothing | Structure, triggers, actionability, examples |
+| **L2** | Smoke Test | API Key | Can LLM actually trigger this skill? |
+| **L3** | Deep Eval | Coming | Benchmark matching, execution test |
+
+## 📊 Evaluation Dimensions (L1)
 
 | Dimension | Weight | What it checks |
 |-----------|--------|----------------|
@@ -75,6 +87,21 @@ python scripts/quick_eval.py ./my-skill --format html
 | 🥉 Bronze | 0.50-0.69 | Needs improvement |
 | ❌ Fail | <0.50 | Critical issues |
 
+## 🌐 Web UI
+
+Try the online evaluator (no installation required):
+
+```
+https://eval.skills.sh
+```
+
+Or run locally:
+
+```bash
+cd web && npm install && npm run dev
+# Open http://localhost:3000
+```
+
 ## 📄 Sample Output
 
 ```json
@@ -92,6 +119,27 @@ python scripts/quick_eval.py ./my-skill --format html
   "issues": [...],
   "recommendations": [...]
 }
+```
+
+## 🛠️ Advanced Usage
+
+### Individual Scripts
+
+```bash
+# Static analysis only
+node scripts/quick_eval.js ./my-skill --format html
+
+# Smoke test only
+node scripts/smoke_test.js ./my-skill --provider qwen
+
+# Preview prompts without LLM
+node scripts/smoke_test.js ./my-skill --extract-only
+```
+
+### Batch Evaluation
+
+```bash
+node scripts/quick_eval.js ./skills-directory --batch
 ```
 
 ## 🔗 Links
