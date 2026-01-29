@@ -407,13 +407,27 @@ function generateHTML(report, smokeResult = null) {
 // API Route Handler
 // =============================================================================
 
+function convertToRawUrl(url) {
+    // Convert GitHub blob URL to raw URL
+    // https://github.com/user/repo/blob/branch/path -> https://raw.githubusercontent.com/user/repo/branch/path
+    const githubBlobMatch = url.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/(.+)$/);
+    if (githubBlobMatch) {
+        const [, user, repo, path] = githubBlobMatch;
+        return `https://raw.githubusercontent.com/${user}/${repo}/${path}`;
+    }
+    return url;
+}
+
 export async function POST(request) {
     try {
-        const { url, enableL2, apiKey, provider } = await request.json();
+        const { url: inputUrl, enableL2, apiKey, provider } = await request.json();
 
-        if (!url) {
+        if (!inputUrl) {
             return NextResponse.json({ error: 'URL is required' }, { status: 400 });
         }
+
+        // Auto-convert GitHub blob URLs to raw URLs
+        const url = convertToRawUrl(inputUrl);
 
         // Fetch skill content
         const response = await fetch(url);
