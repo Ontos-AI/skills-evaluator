@@ -1,6 +1,10 @@
 ---
 name: ontos-skill-evaluator
-description: Meta-skill by Ontos AI for evaluating Claude Skills quality. Use when you need to assess a SKILL.md file's quality, validate its structure, detect common issues (duplicate frontmatter, missing triggers, vague instructions), or generate an evaluation report with actionable recommendations. Triggers: "evaluate this skill", "check skill quality", "assess skill effectiveness", "validate SKILL.md", "run ontos evaluator".
+description: "Meta-skill by Ontos AI for evaluating Claude Skills quality. Use when you need to assess a SKILL.md file quality, validate its structure, detect common issues, or generate an evaluation report with actionable recommendations."
+license: MIT
+metadata:
+  author: ontos-ai
+  version: "1.0.0"
 ---
 
 # Ontos Skill Evaluator
